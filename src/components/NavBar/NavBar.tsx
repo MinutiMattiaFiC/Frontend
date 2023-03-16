@@ -5,6 +5,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUser} from "@fortawesome/free-solid-svg-icons";
 
 function NavBar() {
 
@@ -19,7 +21,7 @@ function NavBar() {
                             style={{ maxHeight: '100px' }}
                             navbarScroll
                         >
-                            <Nav.Link href="#action1">Posts</Nav.Link>
+
                         </Nav>
                         <Form className="d-flex">
                             <Form.Control
@@ -30,6 +32,11 @@ function NavBar() {
                             />
                             <Button variant="outline-success">Search</Button>
                         </Form>
+                        <Navbar.Brand
+                            style={{padding:'10px'}}
+                            href="/auth/register">
+                            <FontAwesomeIcon icon={faUser} />
+                        </Navbar.Brand>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

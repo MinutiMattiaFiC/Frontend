@@ -1,51 +1,54 @@
-import { useState, useEffect } from 'react';
-import { Card, Button } from 'react-bootstrap';
+import React from 'react';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 
 interface Post {
+    id: number;
     title: string;
     content: string;
+    author: string;
 }
 
+const posts: Post[] = [
+    {
+        id: 1,
+        title: 'Il mio primo post',
+        content: 'Questo è il contenuto del mio primo post...',
+        author: 'Mario Rossi',
+    },
+    {
+        id: 2,
+        title: 'Il mio secondo post',
+        content: 'Questo è il contenuto del mio secondo post...',
+        author: 'Luigi Verdi',
+    },
+];
 
-function Post() {
-    const [posts, setPosts] = useState<Post[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:8252/posts', { mode: 'no-cors' });
-                if (!response.ok) {
-                    throw new Error(`Response status ${response.status}`);
-                }
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const data = await response.json();
-                    setPosts(data);
-                } else {
-                    const data = await response.text();
-                    console.log(data);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
+const Post: React.FC = () => {
     return (
-        <div>
-            {posts.map((post, index) => (
-                <Card key={index}>
-                    <Card.Header>{post.title}</Card.Header>
-                    <Card.Body>
-                        <Card.Text>{post.content}</Card.Text>
-                        <Button variant="primary">Go somewhere</Button>
-                    </Card.Body>
-                </Card>
-            ))}
-        </div>
+        <Container>
+            <Row>
+                <Col>
+                    <h1>Benvenuti nel nostro blog!</h1>
+                </Col>
+            </Row>
+            <Row>
+                {posts.map((post) => (
+                    <Col md={4} key={post.id}>
+                        <Card className="my-3">
+                            <Card.Body>
+                                <Card.Title>{post.title}</Card.Title>
+                                <Card.Text>{post.content}</Card.Text>
+                                <Button variant="primary">Leggi di più</Button>
+                            </Card.Body>
+                            <Card.Footer className="text-muted">
+                                Autore: {post.author}
+                            </Card.Footer>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+        </Container>
     );
-}
+};
 
 export default Post;
