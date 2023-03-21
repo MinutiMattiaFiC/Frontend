@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import axios from "axios";
 
 function LoginPage() {
@@ -16,6 +14,7 @@ function LoginPage() {
             password: password
         }).then((response) => {
             localStorage.setItem('accessToken', response.data.data.token);
+            window.location.href = '/posts';
         }, (error) => {
             console.log(error);
         });
