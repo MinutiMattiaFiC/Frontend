@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import React, { useState } from 'react';
 import axios from 'axios';
 import useApi from "../components/hooks/useApi";
+import {Link} from "react-router-dom";
 
 
 function Register() {
@@ -147,9 +148,14 @@ function Register() {
                         Min 8 lenght
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
+                <Stack direction="horizontal" gap={3}>
+                    <Button variant="primary" type="submit">
+                        Submit
+                    </Button>
+                    <Link to={`/auth/login`}>
+                        <Button variant="primary">login</Button>
+                    </Link>
+                </Stack>
             </Form>
         </Stack>
         </Container>

@@ -17,7 +17,7 @@ import SinglePost from "./pages/SinglePost";
 const route = createBrowserRouter(createRoutesFromElements(
     <Route path="/" element={<App/>}>
         <Route path={"/posts"} element={<PostPage/>} />
-        <Route path="/posts/:postId" element={<SinglePost />} />
+        <Route path="/posts/:post_id" element={<SinglePost />} />
         <Route path={"/auth/register"} element={<Register/>} />
         <Route path={"/auth/login"} element={<Login/>} />
     </Route>
