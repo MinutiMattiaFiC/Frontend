@@ -6,8 +6,8 @@ const useApi = () => {
         return axios.get(`${baseUrl}${endPoint}`);
     }
 
-    const fetchPost = () => {
-        console.log("Eseguo chiamata api")
+    const fetchPost = (endPoint: string,payLoad:string) => {
+        return axios.post(`${baseUrl}${endPoint}`,`${payLoad}`);
     }
 
     return {fetchGet,fetchPost}

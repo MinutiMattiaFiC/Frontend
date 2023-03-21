@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import{Post,User} from "../components/interface/types";
 import { Link } from "react-router-dom";
+import Stack from "react-bootstrap/Stack";
 
 
 const PostPage: React.FC = () => {
@@ -43,6 +44,12 @@ const PostPage: React.FC = () => {
                     </Col>
                 ))}
             </Row>
+            <Stack direction="horizontal" gap={3}>
+                <Link to="/posts/new">
+                    <Button variant="primary">Crea un nuovo post</Button>
+                </Link>
+            </Stack>
+
         </Container>
     );
 };

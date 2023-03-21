@@ -13,12 +13,6 @@ import {Link} from "react-router-dom";
 function Register() {
     const [validated, setValidated] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
-    const [passwordValid, setPasswordValid] = useState(false);
-    axios.post('http://localhost:8252/auth/register', {
-        first_name: 'Finn',
-        last_name: 'Williams',
-        email:'prova'
-    })
 
     const handleSubmit = (event: { currentTarget: any; preventDefault: () => void; stopPropagation: () => void; }) => {
         const form = event.currentTarget;
@@ -27,7 +21,6 @@ function Register() {
             event.stopPropagation();
         }
         const {elements} = form;
-        // Controlla se le password coincidono
         const password = elements.formBasicPassword.value;
         const confirmPassword = elements.formBasicPasswordConf.value;
         if (password !== confirmPassword) {
@@ -42,14 +35,12 @@ function Register() {
                 const last_name = elements['formBasicLastName'].value;
                 const email = elements['formBasicEmail'].value;
                 const password = elements['formBasicPassword'].value;
-
-                const fetchPost = useApi();
                 axios.post('http://localhost:8252/auth/register', {
-                    first_name: 'Finn',
-                    last_name: 'Williams',
-                    email:'prova'
-                })
-                    .then((response) => {
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    password:password
+                }).then((response) => {
                         console.log(response);
                     }, (error) => {
                         console.log(error);
@@ -108,7 +99,6 @@ function Register() {
                         Please provide a valid email.
                     </Form.Control.Feedback>
                 </Form.Group>
-
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
