@@ -10,31 +10,33 @@ interface RouteParams {
     comment: string | "";
 }
 
+type DataInfoType = (Post & { user: User }) | undefined
 
-
-type DataInfoType = (Post & { comment: Comment[], user: User }) | undefined
-
-    const SinglePost = () => {
+const SinglePost = () => {
     const [postData, setPostData] = useState<DataInfoType>( undefined);
+    const [comment, setComment] = useState<Comment[]>([]);
+    const onLoad = 3; //commenti caricati alla volta
     const {fetchGet} = useApi();
-    const { post_id } = useParams<RouteParams>();
-    const location = useLocation();
-    const commentCount = new URLSearchParams(location.search).get("comment") ?? "";
+    const {post_id} = useParams<RouteParams>();
 
 
-        useEffect(() => {
-            const encodedComment = encodeURIComponent(commentCount ?? "");
-            fetchGet(`posts/${post_id}?comments=${encodedComment}`).then((response) => {
-                setPostData(response.data.data);
-            });
-        }, [fetchGet, post_id, commentCount]);
-        const handleIncrementComment = () => {
-            const newCommentCount = 5 + (parseInt(commentCount) || 0); // converte in numero e incrementa di 5, se è NaN allora imposta a 0
-            const newUrl = `/posts/${post_id}?comment=${newCommentCount}`;
-            window.location.assign(newUrl);
-        };
+    useEffect(() => {
+        fetchGet(`posts/${post_id}?comments=${onLoad}`).then((response) => {
+            setPostData(response.data.data);
+            setComment((response.data.data.comment))
+        });
+    }, [post_id]);
 
-        return (
+     const handleIncrementComment = () => {
+        const lastComment = comment[comment.length - 1];
+        const last_comment_id = lastComment.id;
+        fetchGet(`posts/load/${post_id}?comments=${onLoad}&last_comment_id=${last_comment_id}`).then((response) => {
+            const newComments = response.data.data;
+            setComment(prevComments => prevComments.concat(newComments));
+        });
+    };
+
+    return (
         <Container className="my-5">
             <Row>
                 <Col md={8}>
@@ -47,10 +49,9 @@ type DataInfoType = (Post & { comment: Comment[], user: User }) | undefined
                             <small className="text-muted">Posted by {postData?.user.full_name}</small>
                         </Card.Footer>
                     </Card>
-
                     <h2 className="my-4">Comments</h2>
-                    {Array.isArray(postData?.comment) ?
-                        postData?.comment.map((comment) => (
+                    {Array.isArray(comment) ?
+                        comment.map((comment) => (
                             <Card key={comment.id} className="my-4">
                                 <Card.Body>
                                     <Card.Text>{comment.content}</Card.Text>
@@ -68,9 +69,7 @@ type DataInfoType = (Post & { comment: Comment[], user: User }) | undefined
                     >
                         {'see more comment'}
                     </Button>
-
                 </Col>
-
                 <Col md={4}>
                     <Card><Card.Body>
                             <Card.Title>About the author
@@ -81,11 +80,10 @@ type DataInfoType = (Post & { comment: Comment[], user: User }) | undefined
                             <Card.Text>{postData?.user.email}</Card.Text>
                         </Card.Body>
                     </Card>
-
                 </Col>
-
             </Row>
-        </Container>);
+        </Container>
+    );
 };
 
 export default SinglePost;
