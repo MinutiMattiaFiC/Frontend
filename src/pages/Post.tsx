@@ -1,29 +1,23 @@
-import React from 'react';
+import useApi from "../components/hooks/useApi";
+
+import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import{Post,User} from "../components/interface/types";
+import { Link } from "react-router-dom";
 
-interface Post {
-    id: number;
-    title: string;
-    content: string;
-    author: string;
-}
 
-const posts: Post[] = [
-    {
-        id: 1,
-        title: 'Il mio primo post',
-        content: 'Questo è il contenuto del mio primo post...',
-        author: 'Mario Rossi',
-    },
-    {
-        id: 2,
-        title: 'Il mio secondo post',
-        content: 'Questo è il contenuto del mio secondo post...',
-        author: 'Luigi Verdi',
-    },
-];
+const PostPage: React.FC = () => {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [users,setUser] = useState<User[]>([]);
+    const {fetchGet,fetchPost} = useApi();
 
-const Post: React.FC = () => {
+    useEffect(() => {
+        fetchGet('posts').then((response) => {
+            setPosts(response.data.data);
+            setUser(response.data.data);
+        });
+    }, []);
+
     return (
         <Container>
             <Row>
@@ -38,10 +32,12 @@ const Post: React.FC = () => {
                             <Card.Body>
                                 <Card.Title>{post.title}</Card.Title>
                                 <Card.Text>{post.content}</Card.Text>
-                                <Button variant="primary">Leggi di più</Button>
+                                <Link to={`/posts/${post.id}?Comment=0`}>
+                                    <Button variant="primary">Leggi di più</Button>
+                                </Link>
                             </Card.Body>
                             <Card.Footer className="text-muted">
-                                Autore: {post.author}
+                                <Card.Text>{post.full_name}</Card.Text>
                             </Card.Footer>
                         </Card>
                     </Col>
@@ -50,5 +46,4 @@ const Post: React.FC = () => {
         </Container>
     );
 };
-
-export default Post;
+export default PostPage;

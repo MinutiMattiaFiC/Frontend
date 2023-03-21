@@ -1,98 +1,49 @@
-import { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import {useEffect, useState} from "react";
+import {Container, Row, Col, Badge, Button, Card} from "react-bootstrap";
+import { Comment,Post,User } from '../components/interface/types';
+import useApi from "../components/hooks/useApi";
 
-interface Comment {
-    id: number;
-    author: string;
-    text: string;
-}
-
-interface Post {
-    id: number;
-    title: string;
-    author: string;
-    body: string;
-}
+type DataInfoType = (Post & { comment: Comment[], user: User }) | undefined
 
 const SinglePost = () => {
-    const [commentText, setCommentText] = useState("");
-    const [comments, setComments] = useState<Comment[]>([
-        {
-            id: 1,
-            author: "John",
-            text: "Great post!",
-        },
-        {
-            id: 2,
-            author: "Jane",
-            text: "Thanks for sharing!",
-        },
-    ]);
+    const [postData, setPostData] = useState<DataInfoType>( undefined);
+    const {fetchGet} = useApi();
 
-    const post: Post = {
-        id: 1,
-        title: "My First Blog Post",
-        author: "Bob",
-        body:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed luctus nisi vitae diam malesuada iaculis. Fusce in velit massa. Sed at interdum odio. Nam feugiat dolor quis libero auctor consequat. Nullam id magna id risus tristique maximus. Integer interdum, tortor vitae efficitur suscipit, justo elit varius elit, a faucibus enim lectus quis massa.",
-    };
+    useEffect(() => {
+        fetchGet('posts/1').then((response) => {
+            setPostData(response.data.data)
+        });
+    }, []);
 
-    const handleCommentSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!commentText.trim()) return;
-        const newComment: Comment = {
-            id: comments.length + 1,
-            author: "You",
-            text: commentText.trim(),
-        };
-        setComments([...comments, newComment]);
-        setCommentText("");
-    };
 
     return (
         <Container className="my-5">
             <Row>
-                <Col>
-                    <h1>{post.title}</h1>
-            <p className="text-muted">
-        By {post.author} | {new Date().toDateString()}
-    </p>
-    <p>{post.body}</p>
-    </Col>
-    </Row>
-    <hr />
-    <Row>
-        <Col>
-            <h4>Comments</h4>
-    {comments.length > 0 ? (
-        comments.map((comment) => (
-            <div key={comment.id} className="my-3">
-    <p className="text-muted">
-        {comment.author} | {new Date().toLocaleString()}
-        </p>
-        <p>{comment.text}</p>
-        <hr />
-        </div>
-    ))
-    ) : (
-        <p>No comments yet.</p>
-    )}
-    <Form onSubmit={handleCommentSubmit}>
-    <Form.Group controlId="commentForm.ControlTextarea1">
-        <Form.Label>Leave a Comment</Form.Label>
-    <Form.Control
-    as="textarea"
-    rows={3}
-    value={commentText}
-    onChange={(event) => setCommentText(event.target.value)}
-    />
-    </Form.Group>
-    <Button variant="primary" type="submit">
-        Submit
-        </Button>
-        </Form>
-        </Col>
-        </Row>
+                <Col md={8}>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>{postData?.title}</Card.Title>
+                            <Card.Text>{postData?.content}</Card.Text>
+                        </Card.Body>
+                        <Card.Footer>
+                            <small className="text-muted">Posted by {postData?.user.full_name}</small>
+                        </Card.Footer>
+                    </Card>
+                </Col>
+                <Col md={4}>
+                    <Card><Card.Body>
+                            <Card.Title>About the author
+                                <Badge bg="primary">
+                                    {postData?.user.subscription}
+                                </Badge>{' '}
+                            </Card.Title>
+                            <Card.Text>{postData?.user.email}</Card.Text>
+                        </Card.Body>
+                    </Card>
+
+                </Col>
+
+            </Row>
         </Container>
 );
 };

@@ -6,13 +6,18 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import React, { useState } from 'react';
 import axios from 'axios';
+import useApi from "../components/hooks/useApi";
 
 
 function Register() {
     const [validated, setValidated] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
-
+    axios.post('http://localhost:8252/auth/register', {
+        first_name: 'Finn',
+        last_name: 'Williams',
+        email:'prova'
+    })
 
     const handleSubmit = (event: { currentTarget: any; preventDefault: () => void; stopPropagation: () => void; }) => {
         const form = event.currentTarget;
@@ -20,9 +25,10 @@ function Register() {
             event.preventDefault();
             event.stopPropagation();
         }
+        const {elements} = form;
         // Controlla se le password coincidono
-        const password = form.elements.formBasicPassword.value;
-        const confirmPassword = form.elements.formBasicPasswordConf.value;
+        const password = elements.formBasicPassword.value;
+        const confirmPassword = elements.formBasicPasswordConf.value;
         if (password !== confirmPassword) {
             setPasswordsMatch(false);
             setValidated(false); // Imposta validated su false per visualizzare il feedback di errore
@@ -31,21 +37,21 @@ function Register() {
         } else {
             setPasswordsMatch(true);
             if (form.checkValidity() && passwordsMatch) {
-                const first_name = form.elements['formBasicFirstName'].value;
-                const last_name = form.elements['formBasicLastName'].value;
-                const email = form.elements['formBasicEmail'].value;
-                const password = form.elements['formBasicPassword'].value;
+                const first_name = elements['formBasicFirstName'].value;
+                const last_name = elements['formBasicLastName'].value;
+                const email = elements['formBasicEmail'].value;
+                const password = elements['formBasicPassword'].value;
 
-                const data = { first_name, last_name, email, password };
-
-                axios.post('http://localhost:8252/auth/register', data, {
-                    headers: { 'Content-Type': 'application/json' },
+                const fetchPost = useApi();
+                axios.post('http://localhost:8252/auth/register', {
+                    first_name: 'Finn',
+                    last_name: 'Williams',
+                    email:'prova'
                 })
                     .then((response) => {
-                        console.log(response.data);
-                    })
-                    .catch((error) => {
-                        console.error(error);
+                        console.log(response);
+                    }, (error) => {
+                        console.log(error);
                     });
             }
             setValidated(true);

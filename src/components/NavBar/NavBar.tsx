@@ -32,6 +32,7 @@ function NavBar() {
                             />
                             <Button variant="outline-success">Search</Button>
                         </Form>
+
                         <Navbar.Brand
                             style={{padding:'10px'}}
                             href="/auth/register">
