@@ -26,8 +26,11 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
         <Route path={"/auth/login"} element={<Login/>} />
 
         <Route path={"/posts/new"} element={
-            <NewPostPage/>
+            <ProtectedRoute>
+                <NewPostPage/>
+            </ProtectedRoute>
         } />
+
 
     </Route>
     )

@@ -22,6 +22,7 @@ function NewPostPage() {
 
     return (
         <Container>
+            <h1>Create new post</h1>
             <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Post title</Form.Label>
@@ -33,8 +34,8 @@ function NewPostPage() {
                         onChange={(event) => setTitle(event.target.value)}
                     />
                 </Form.Group>
-                <Form.Group controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Example textarea</Form.Label>
+                <Form.Group className="mb-3" controlId="ControlTextarea">
+                    <Form.Label>Content</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={3}
