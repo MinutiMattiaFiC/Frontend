@@ -13,7 +13,7 @@ function NavBar() {
     return (
             <Navbar bg="light" expand="lg">
                 <Container fluid>
-                    <Navbar.Brand href="#">Home</Navbar.Brand>
+                    <Navbar.Brand href="/posts">Home</Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
@@ -35,7 +35,7 @@ function NavBar() {
 
                         <Navbar.Brand
                             style={{padding:'10px'}}
-                            href="/auth/register">
+                            href="/auth/login">
                             <FontAwesomeIcon icon={faUser} />
                         </Navbar.Brand>
                     </Navbar.Collapse>

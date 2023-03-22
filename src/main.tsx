@@ -7,21 +7,28 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
     Route,
-    RouterProvider
+    RouterProvider,
+    Navigate,
+    redirect
 } from "react-router-dom";
 import PostPage from "../src/pages/Post";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import SinglePost from "./pages/SinglePost";
 import NewPostPage from "./pages/NewPost";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
-const route = createBrowserRouter(createRoutesFromElements(
+    const route = createBrowserRouter(createRoutesFromElements(
     <Route path="/" element={<App/>}>
         <Route path={"/posts"} element={<PostPage/>} />
-        <Route path={"/posts/new"} element={<NewPostPage/>} />
         <Route path="/posts/:post_id" element={<SinglePost />} />
         <Route path={"/auth/register"} element={<Register/>} />
         <Route path={"/auth/login"} element={<Login/>} />
+
+        <Route path={"/posts/new"} element={
+            <NewPostPage/>
+        } />
+
     </Route>
     )
 
