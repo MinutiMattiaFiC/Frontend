@@ -3,10 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import axios from "axios";
+import Toast from "../components/Obj/Toast";
+import {ToastContainer} from "react-bootstrap";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showA, setShowA] = useState(false);
+    const toggleShowA = () => setShowA(!showA);
+    const [message, setMessage] = useState("");
 
     const onClick = () =>{
         axios.post('http://localhost:8252/auth/login', {
@@ -16,7 +21,8 @@ function LoginPage() {
             localStorage.setItem('accessToken', response.data.data.token);
             window.location.href = '/posts';
         }, (error) => {
-            console.log(error);
+            setShowA(true)
+            setMessage(" 422 Unprocessable Content ");
         });
     };
 
@@ -50,6 +56,14 @@ function LoginPage() {
                 <Button variant="primary" onClick={onClick}>
                     Submit
                 </Button>
+                <ToastContainer className="p-3" position={'top-start'} containerPosition={'absolute'}>
+                    <Toast
+                        showA={showA}
+                        toggleShowA={toggleShowA}
+                        message={message}
+                        status={'danger'}
+                    ></Toast>
+                </ToastContainer>
             </Form>
         </Container>
     );
