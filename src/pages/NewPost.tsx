@@ -3,11 +3,12 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import axios from "axios";
+import useToken from "../components/hooks/useToken";
 
 function NewPostPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const api_token = localStorage.getItem('accessToken');
+    const api_token = useToken();
     const onClick = () =>{
         axios.post('http://localhost:8252/posts', {
             title: title,
@@ -47,6 +48,7 @@ function NewPostPage() {
                     Submit
                 </Button>
             </Form>
+
         </Container>
     );
 }

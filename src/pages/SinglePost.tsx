@@ -1,8 +1,9 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Container, Row, Col, Badge, Button, Card} from "react-bootstrap";
 import { Comment,Post,User } from '../components/interface/types';
 import useApi from "../components/hooks/useApi";
 import { useParams,useLocation } from "react-router-dom";
+import AuthenticatedForm from "../components/NavBar/AuthenticatedForm";
 
 interface RouteParams {
     [param: string]: string | undefined;
@@ -49,6 +50,7 @@ const SinglePost = () => {
                             <small className="text-muted">Posted by {postData?.user.full_name}</small>
                         </Card.Footer>
                     </Card>
+                    <AuthenticatedForm>{postData as Post}</AuthenticatedForm>
                     <h2 className="my-4">Comments</h2>
                     {Array.isArray(comment) ?
                         comment.map((comment) => (
@@ -72,12 +74,11 @@ const SinglePost = () => {
                 </Col>
                 <Col md={4}>
                     <Card><Card.Body>
-                            <Card.Title>About the author
-                                <Badge bg="primary">
-                                    {postData?.user.subscription}
-                                </Badge>{' '}
-                            </Card.Title>
-                            <Card.Text>{postData?.user.email}</Card.Text>
+                            <Card.Title>About the author</Card.Title>
+                            <Card.Text>{postData?.user.email}<Badge bg="primary">
+                                {postData?.user.subscription}
+                            </Badge>{' '}
+                            </Card.Text>
                         </Card.Body>
                     </Card>
                 </Col>
