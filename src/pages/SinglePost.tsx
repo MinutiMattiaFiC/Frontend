@@ -3,8 +3,10 @@ import {Container, Row, Col, Badge, Button, Card} from "react-bootstrap";
 import { Comment,Post,User } from '../components/interface/types';
 import useApi from "../components/hooks/useApi";
 import { useParams,useLocation } from "react-router-dom";
-import AuthenticatedForm from "../components/NavBar/AuthenticatedForm";
-
+import AuthenticatedForm from "../components/Obj/AuthenticatedForm";
+import Modal from "../components/Obj/Modal";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 interface RouteParams {
     [param: string]: string | undefined;
     post_id: string;
@@ -19,6 +21,7 @@ const SinglePost = () => {
     const onLoad = 3; //commenti caricati alla volta
     const {fetchGet} = useApi();
     const {post_id} = useParams<RouteParams>();
+    const [modalShow, setModalShow] = React.useState(false);
 
 
     useEffect(() => {
@@ -56,7 +59,17 @@ const SinglePost = () => {
                         comment.map((comment) => (
                             <Card key={comment.id} className="my-4">
                                 <Card.Body>
-                                    <Card.Text>{comment.content}</Card.Text>
+                                    <Card.Text>{comment.content}
+                                        <FontAwesomeIcon
+                                            onClick={() => setModalShow(true)}
+                                            icon={faEye} />
+                                        <Modal
+                                            show={modalShow}
+                                            onHide={() => setModalShow(false)}
+                                            title = {comment.user_id}
+                                            content = {comment.content}
+                                        />
+                                    </Card.Text>
                                 </Card.Body>
                                 <Card.Footer>
                                     <small className="text-muted">Comment by {comment.user_id}</small>

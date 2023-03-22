@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {Form, Button, Toast} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import useToken from "../hooks/useToken";
 import axios from "axios";
-import {Post, User} from "../interface/types";
 import Container from "react-bootstrap/Container";
 import ToastContainer from 'react-bootstrap/ToastContainer'
+import Toast from "./Toast";
 interface IAUthForm {
     children: any;
 }
@@ -49,25 +49,17 @@ const AuthenticatedForm : React.FC<IAUthForm> = ({children}) => {
             </Form>
             <ToastContainer className="p-3" position={'top-start'} containerPosition={'absolute'}>
                 <Toast
-                    bg = 'success'
-                    delay={3000} autohide
-                    show={showA} onClose={toggleShowA}>
-                    <Toast.Header>
-                        <strong className="me-auto">Success!</strong>
-                        <small>just now</small>
-                    </Toast.Header>
-                    <Toast.Body>Comment added</Toast.Body>
-                </Toast>
+                    showA={showA}
+                    toggleShowA={toggleShowA}
+                    message={"Comment added"}
+                    status={'success'}
+                ></Toast>
                 <Toast
-                    bg = 'danger'
-                    delay={3000} autohide
-                    show={showB} onClose={toggleShowB}>
-                    <Toast.Header>
-                        <strong className="me-auto">Error!</strong>
-                        <small>just now</small>
-                    </Toast.Header>
-                    <Toast.Body>Something goes wrong</Toast.Body>
-                </Toast>
+                    showA={showB}
+                    toggleShowA={toggleShowB}
+                    message={"Something goes wrong"}
+                    status={'danger'}
+                ></Toast>
             </ToastContainer>
         </Container>
     );
