@@ -10,7 +10,7 @@ function ModalComment(props:any) {
     const {fetchDelete} = useApi()
     const handleDelete = () => {
         fetchDelete(`${props.url}`).then((response) => {
-            props.onDelete(props.comment)
+            props.onDelete(props.element)
         })
     }
 

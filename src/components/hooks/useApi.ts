@@ -23,7 +23,14 @@ const useApi = () => {
         });
     },[apiToken])
 
-    return {fetchGet,fetchPost,fetchDelete}
+    const fetchPut = useCallback ((endPoint: string,payLoad:Record<string, any>) => {
+        return axios.put(`${baseUrl}${endPoint}`,{
+            api_token : apiToken,
+            ...payLoad
+        });
+    },[apiToken])
+
+    return {fetchGet,fetchPost,fetchDelete,fetchPut}
 }
 
 

@@ -5,11 +5,12 @@ import useApi from "../components/hooks/useApi";
 import { useParams,useLocation } from "react-router-dom";
 import FormAddComment from "../components/Obj/FormAddComment";
 import Modal from "../components/Obj/Modal";
-import {faEye,faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faEye,faTrash,faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import useToken from "../components/hooks/useToken";
 import useUser from "../components/hooks/useUser";
 import ModalDelete from "../components/Obj/ModalDelete";
+import ModalEditComment from "../components/Obj/ModalEditComment";
 interface RouteParams {
     [param: string]: string | undefined;
     post_id: string;
@@ -24,6 +25,7 @@ const SinglePost = () => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [modalShow, setModalShow] = useState();
     const [modalErrorShow , setModalErrorShow] = useState();
+    const [modalEditShow , setModalEditShow] = useState();
     const [buttonStatus, setButtonStatus] = useState(false);
 
     const apiToken = useToken();
@@ -40,6 +42,17 @@ const SinglePost = () => {
             return prevComments.filter(comment => comment !== commentToDelete);
         });
     }, [comments]);
+    const onEditComment = useCallback((commentToEdit: Comment) => {
+        setComments(prevComments => {
+            return prevComments.map(comment => {
+                if (comment === commentToEdit) {
+                    return { ...comment, content: commentToEdit.content };
+                }
+                return comment;
+            });
+        });
+    }, [comments]);
+
 
 
     useEffect(() => {
@@ -88,11 +101,16 @@ const SinglePost = () => {
                                     <Card.Text>
                                         {comment.content}
                                         {(useUser().id === comment.user_id) && (
-                                            <FontAwesomeIcon
-                                                // @ts-ignore
-                                                onClick={() => setModalErrorShow(comment.id)}
-                                                icon={faTrash}
-                                            />
+                                            <>
+                                                <FontAwesomeIcon
+                                                    // @ts-ignore
+                                                    onClick={() => setModalErrorShow(comment.id)}
+                                                    icon={faTrash}/>
+                                                <FontAwesomeIcon
+                                                    // @ts-ignore
+                                                    onClick={() => setModalEditShow(comment.id)}
+                                                    icon={faEdit}/>
+                                            </>
                                         )}
                                         <FontAwesomeIcon
                                             // @ts-ignore
@@ -110,7 +128,7 @@ const SinglePost = () => {
                                         />
                                         <ModalDelete
                                             // @ts-ignoreon
-                                            comment ={comment}
+                                            element ={comment}
                                             show={modalErrorShow === comment.id}
                                             // @ts-ignore
                                             onHide={() => setModalErrorShow(null)}
@@ -119,6 +137,14 @@ const SinglePost = () => {
                                             url={`comments/${comment.id}`}
                                             onDelete={onDeleteComment}
                                         />
+                                        <ModalEditComment
+                                            show={modalEditShow === comment.id}
+                                            // @ts-ignore
+                                            onHide={() => setModalEditShow(null)}
+                                            url={`comments/${comment.id}`}
+                                            element={comment}
+                                            onEdit={onEditComment}
+                                            />
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer>
