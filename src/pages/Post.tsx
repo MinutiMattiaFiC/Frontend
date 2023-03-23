@@ -8,13 +8,16 @@ import Stack from "react-bootstrap/Stack";
 import ModalDelete from "../components/Obj/ModalDelete";
 import useUser from "../components/hooks/useUser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faTrash} from "@fortawesome/free-solid-svg-icons";
+import ModalEditComment from "../components/Obj/ModalEditComment";
+import ModalEditPost from "../components/Obj/ModalEditPost";
 
 
 const PostPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const {fetchGet,fetchPost} = useApi();
     const [modalErrorShow , setModalErrorShow] = useState();
+    const [modalEditShow , setModalEditShow] = useState();
 
     useEffect(() => {
         fetchGet('posts').then((response) => {
@@ -22,6 +25,16 @@ const PostPage: React.FC = () => {
         });
     }, []);
 
+    const onEditPost = useCallback((postToEdit: Post) => {
+        setPosts(prevPosts => {
+            return prevPosts.map(post => {
+                if (post === postToEdit) {
+                    return { ...post, content: postToEdit.content,title:postToEdit.title };
+                }
+                return post;
+            });
+        });
+    }, [posts]);
     const onDeletePost = useCallback((postToDelete: Post) => {
         setPosts(prevPosts => {
             return prevPosts.filter(post => post !== postToDelete);
@@ -42,11 +55,16 @@ const PostPage: React.FC = () => {
                                 <Card.Title>{post.title}</Card.Title>
                                     <Card.Text>{post.content}
                                         {(useUser().id === post.user_id) && (
-                                            <FontAwesomeIcon
-                                                // @ts-ignore
-                                                onClick={() => setModalErrorShow(post.id)}
-                                                icon={faTrash}
-                                            />
+                                            <>
+                                                <FontAwesomeIcon
+                                                    // @ts-ignore
+                                                    onClick={() => setModalErrorShow(post.id)}
+                                                    icon={faTrash}/>
+                                                <FontAwesomeIcon
+                                                    // @ts-ignore
+                                                    onClick={() => setModalEditShow(post.id)}
+                                                    icon={faEdit}/>
+                                            </>
                                         )}
                                     </Card.Text>
                                 <Link to={`/posts/${post.id}?Comment=0`}>
@@ -63,6 +81,14 @@ const PostPage: React.FC = () => {
                                 content={"Are you sure to delete this post?"}
                                 url={`posts/${post.id}`}
                                 onDelete={onDeletePost}
+                            />
+                            <ModalEditPost
+                                show={modalEditShow === post.id}
+                                // @ts-ignore
+                                onHide={() => setModalEditShow(null)}
+                                url={`posts/${post.id}`}
+                                element={post}
+                                onEdit={onEditPost}
                             />
                             <Card.Footer className="text-muted">
                                 <Card.Text>{post.full_name}</Card.Text>

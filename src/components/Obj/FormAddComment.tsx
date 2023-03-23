@@ -20,6 +20,7 @@ const FormAddComment  = (props : any) => {
             content: content,
             post_id : props.postId
         }).then((response) => {
+            setContent("")
             setShowA(true)
             props.onSave(response.data.data)
         }, (error) => {

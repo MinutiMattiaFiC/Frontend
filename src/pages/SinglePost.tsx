@@ -53,8 +53,6 @@ const SinglePost = () => {
         });
     }, [comments]);
 
-
-
     useEffect(() => {
         fetchGet(`posts/${post_id}?comments=${onLoad}`).then((response) => {
             setPostData(response.data.data);
