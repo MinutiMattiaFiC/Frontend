@@ -1,44 +1,57 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Container, Row, Col, Badge, Button, Card} from "react-bootstrap";
 import { Comment,Post,User } from '../components/interface/types';
 import useApi from "../components/hooks/useApi";
 import { useParams,useLocation } from "react-router-dom";
-import AuthenticatedForm from "../components/Obj/AuthenticatedForm";
+import FormAddComment from "../components/Obj/FormAddComment";
 import Modal from "../components/Obj/Modal";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import useToken from "../components/hooks/useToken";
 interface RouteParams {
     [param: string]: string | undefined;
     post_id: string;
     comment: string | "";
 }
 
-type DataInfoType = (Post & { user: User }) | undefined
+type DataInfoType = Post & { user: User }
+const onLoad = 3; //commenti caricati alla volta
 
 const SinglePost = () => {
-    const [postData, setPostData] = useState<DataInfoType>( undefined);
-    const [comment, setComment] = useState<Comment[]>([]);
-    const onLoad = 3; //commenti caricati alla volta
+    const [postData, setPostData] = useState<DataInfoType>( );
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [modalShow, setModalShow] = useState(false);
+    const [buttonStatus, setButtonStatus] = useState(false);
+
+    const apiToken = useToken();
     const {fetchGet} = useApi();
     const {post_id} = useParams<RouteParams>();
-    const [modalShow, setModalShow] = React.useState(false);
 
+    const onSaveComment = useCallback((comment : Comment) =>{
+        setComments(prevComments => {
+            return [comment,...prevComments]
+        });
+    },[comments]);
 
     useEffect(() => {
         fetchGet(`posts/${post_id}?comments=${onLoad}`).then((response) => {
             setPostData(response.data.data);
-            setComment((response.data.data.comment))
+            setComments((response.data.data.comment))
         });
     }, [post_id]);
 
-     const handleIncrementComment = () => {
-        const lastComment = comment[comment.length - 1];
+     const handleIncrementComment = useCallback (() => {
+         setButtonStatus(true)
+        const lastComment = comments[comments.length - 1];
         const last_comment_id = lastComment.id;
         fetchGet(`posts/load/${post_id}?comments=${onLoad}&last_comment_id=${last_comment_id}`).then((response) => {
             const newComments = response.data.data;
-            setComment(prevComments => prevComments.concat(newComments));
+            setComments(prevComments => prevComments.concat(newComments));
+            if(Array.isArray(newComments) && newComments.length !== 0){
+                setButtonStatus(false)
+            }
         });
-    };
+    },[comments]);
 
     return (
         <Container className="my-5">
@@ -53,10 +66,13 @@ const SinglePost = () => {
                             <small className="text-muted">Posted by {postData?.user.full_name}</small>
                         </Card.Footer>
                     </Card>
-                    <AuthenticatedForm>{postData as Post}</AuthenticatedForm>
+                    {apiToken && <FormAddComment
+                        postId={post_id}
+                        onSave={onSaveComment}
+                    />}
                     <h2 className="my-4">Comments</h2>
-                    {Array.isArray(comment) ?
-                        comment.map((comment) => (
+                    {
+                        comments.map((comment) => (
                             <Card key={comment.id} className="my-4">
                                 <Card.Body>
                                     <Card.Text>{comment.content}
@@ -76,13 +92,16 @@ const SinglePost = () => {
                                 </Card.Footer>
                             </Card>
                         ))
-                        : <p>No comments yet.</p>
+                    }
+                    {
+                        !comments && <p>No comments yet</p>
                     }
                     <Button
+                        disabled={buttonStatus}
                         variant="primary"
                         onClick={handleIncrementComment}
                     >
-                        {'see more comment'}
+                        {'see more comments'}
                     </Button>
                 </Col>
                 <Col md={4}>

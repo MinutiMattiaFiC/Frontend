@@ -5,27 +5,23 @@ import axios from "axios";
 import Container from "react-bootstrap/Container";
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from "./Toast";
-interface IAUthForm {
-    children: any;
-}
+import useApi from "../hooks/useApi";
 
-const AuthenticatedForm : React.FC<IAUthForm> = ({children}) => {
-    const api_token = useToken();
+const FormAddComment  = (props : any) => {
+
     const [content, setContent] = useState("");
     const [showA, setShowA] = useState(false);
     const toggleShowA = () => setShowA(!showA);
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
-    if (!api_token) {
-        return null; // Se il token non è presente, il form non viene mostrato
-    }
+    const {fetchPost} = useApi()
     const onClick = () =>{
-        axios.post('http://localhost:8252/comments', {
+        fetchPost('comments',{
             content: content,
-            api_token :api_token,
-            post_id : children?.id
+            post_id : props.postId
         }).then((response) => {
             setShowA(true)
+            props.onSave(response.data.data)
         }, (error) => {
             setShowB(true)
         });
@@ -65,4 +61,4 @@ const AuthenticatedForm : React.FC<IAUthForm> = ({children}) => {
     );
 }
 
-export default AuthenticatedForm;
+export default FormAddComment;
