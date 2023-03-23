@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
-import axios from "axios";
 import Toast from "../components/Obj/Toast";
 import {ToastContainer} from "react-bootstrap";
+import useApi from "../components/hooks/useApi";
+import {Link, Navigate} from "react-router-dom";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
@@ -13,13 +14,14 @@ function LoginPage() {
     const toggleShowA = () => setShowA(!showA);
     const [message, setMessage] = useState("");
 
+    const {fetchPost} = useApi()
     const onClick = () =>{
-        axios.post('http://localhost:8252/auth/login', {
+        fetchPost('auth/login',{
             email: email,
             password: password
         }).then((response) => {
-            localStorage.setItem('accessToken', response.data.data.token);
-            window.location.href = '/posts';
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+            return <Navigate to={'/posts'} replace/>
         }, (error) => {
             setShowA(true)
             setMessage(" 422 Unprocessable Content ");

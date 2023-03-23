@@ -16,7 +16,14 @@ const useApi = () => {
         });
     },[apiToken])
 
-    return {fetchGet,fetchPost}
+    const fetchDelete = useCallback ((endPoint: string) => {
+        return axios.delete(`${baseUrl}${endPoint}`,{
+            data:
+                {api_token : apiToken}
+        });
+    },[apiToken])
+
+    return {fetchGet,fetchPost,fetchDelete}
 }
 
 

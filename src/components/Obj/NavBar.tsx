@@ -7,13 +7,16 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 
 function NavBar() {
 
     return (
             <Navbar bg="light" expand="lg">
                 <Container fluid>
-                    <Navbar.Brand href="/posts">Home</Navbar.Brand>
+                    <Link to="/posts">
+                        <Navbar.Brand >Home</Navbar.Brand>
+                    </Link>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
@@ -32,12 +35,13 @@ function NavBar() {
                             />
                             <Button variant="outline-success">Search</Button>
                         </Form>
-
-                        <Navbar.Brand
-                            style={{padding:'10px'}}
-                            href="/auth/login">
-                            <FontAwesomeIcon icon={faUser} />
-                        </Navbar.Brand>
+                        <Link to="/auth/login">
+                            <Navbar.Brand
+                                style={{padding:'10px'}}
+                            >
+                                <FontAwesomeIcon icon={faUser} />
+                            </Navbar.Brand>
+                        </Link>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

@@ -17,6 +17,9 @@ const PostPage: React.FC = () => {
         });
     }, []);
 
+    const prova = () =>{
+
+    }
     return (
         <Container>
             <Row>

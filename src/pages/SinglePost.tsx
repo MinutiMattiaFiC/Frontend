@@ -5,9 +5,11 @@ import useApi from "../components/hooks/useApi";
 import { useParams,useLocation } from "react-router-dom";
 import FormAddComment from "../components/Obj/FormAddComment";
 import Modal from "../components/Obj/Modal";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEye,faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import useToken from "../components/hooks/useToken";
+import useUser from "../components/hooks/useUser";
+import ModalDelete from "../components/Obj/ModalDelete";
 interface RouteParams {
     [param: string]: string | undefined;
     post_id: string;
@@ -20,7 +22,8 @@ const onLoad = 3; //commenti caricati alla volta
 const SinglePost = () => {
     const [postData, setPostData] = useState<DataInfoType>( );
     const [comments, setComments] = useState<Comment[]>([]);
-    const [modalShow, setModalShow] = useState(false);
+    const [modalShow, setModalShow] = useState();
+    const [modalErrorShow , setModalErrorShow] = useState();
     const [buttonStatus, setButtonStatus] = useState(false);
 
     const apiToken = useToken();
@@ -32,6 +35,12 @@ const SinglePost = () => {
             return [comment,...prevComments]
         });
     },[comments]);
+    const onDeleteComment = useCallback((commentToDelete: Comment) => {
+        setComments(prevComments => {
+            return prevComments.filter(comment => comment !== commentToDelete);
+        });
+    }, [comments]);
+
 
     useEffect(() => {
         fetchGet(`posts/${post_id}?comments=${onLoad}`).then((response) => {
@@ -52,6 +61,7 @@ const SinglePost = () => {
             }
         });
     },[comments]);
+
 
     return (
         <Container className="my-5">
@@ -75,15 +85,39 @@ const SinglePost = () => {
                         comments.map((comment) => (
                             <Card key={comment.id} className="my-4">
                                 <Card.Body>
-                                    <Card.Text>{comment.content}
+                                    <Card.Text>
+                                        {comment.content}
+                                        {(useUser().id === comment.user_id) && (
+                                            <FontAwesomeIcon
+                                                // @ts-ignore
+                                                onClick={() => setModalErrorShow(comment.id)}
+                                                icon={faTrash}
+                                            />
+                                        )}
                                         <FontAwesomeIcon
-                                            onClick={() => setModalShow(true)}
-                                            icon={faEye} />
+                                            // @ts-ignore
+                                            onClick={() => setModalShow(comment.id)}
+                                            icon={faEye}
+                                        />
                                         <Modal
-                                            show={modalShow}
-                                            onHide={() => setModalShow(false)}
-                                            title = {comment.user_id}
-                                            content = {comment.content}
+                                            key={`modal-${comment.id}`}
+                                            // @ts-ignore
+                                            show={modalShow === comment.id}
+                                            // @ts-ignore
+                                            onHide={() => setModalShow(null)}
+                                            title={comment.user_id}
+                                            content={comment.content}
+                                        />
+                                        <ModalDelete
+                                            // @ts-ignoreon
+                                            comment ={comment}
+                                            show={modalErrorShow === comment.id}
+                                            // @ts-ignore
+                                            onHide={() => setModalErrorShow(null)}
+                                            title={"Pay attention"}
+                                            content={"Are you sure to delete this comment?"}
+                                            url={`comments/${comment.id}`}
+                                            onDelete={onDeleteComment}
                                         />
                                     </Card.Text>
                                 </Card.Body>
