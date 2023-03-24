@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Toast from "../components/Obj/Toast";
 import {ToastContainer} from "react-bootstrap";
 import useApi from "../components/hooks/useApi";
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 
 function LoginPage() {
@@ -14,6 +14,7 @@ function LoginPage() {
     const [showA, setShowA] = useState(false);
     const [validated, setValidated] = useState(false);
 
+    const navigate = useNavigate()
     const toggleShowA = () => setShowA(!showA);
     const [message, setMessage] = useState("");
 
@@ -32,7 +33,7 @@ function LoginPage() {
                 password: password
             }).then((response) => {
                 localStorage.setItem('user', JSON.stringify(response.data.data));
-                return <Navigate to={'/posts'} replace/>
+                return(navigate('/posts', { replace: true }))
             }, (error) => {
                 setShowA(true)
                 setMessage(" 422 Unprocessable Content ");

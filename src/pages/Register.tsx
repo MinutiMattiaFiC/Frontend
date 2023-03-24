@@ -5,12 +5,12 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import React, { useState } from 'react';
-import axios from 'axios';
 import useApi from "../components/hooks/useApi";
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function Register() {
     const [validated, setValidated] = useState(false);
+    const navigate = useNavigate()
 
     const [passwordsMatch, setPasswordsMatch] = useState(false);
     const [lastName, setLastName] = useState("");
@@ -38,11 +38,10 @@ function Register() {
                     first_name: firstName,
                     last_name: lastName,
                     email: email,
-                    password: password,
-
+                    password: password
                 }).then((response) => {
                     localStorage.setItem('user', JSON.stringify(response.data.data));
-                    return <Navigate to={'/posts'} replace/>
+                    return(navigate('/posts', { replace: true }))
                 }, (error) => {
                     setShowA(true)
                     setMessage(" 422 Unprocessable Content ");
