@@ -3,8 +3,6 @@ import Modal from 'react-bootstrap/Modal';
 import Container from "react-bootstrap/Container";
 import React, {useCallback} from "react";
 import useApi from "../hooks/useApi";
-import axios from "axios";
-import useToken from "../hooks/useToken";
 
 function ModalComment(props:any) {
     const {fetchDelete} = useApi()
@@ -13,8 +11,6 @@ function ModalComment(props:any) {
             props.onDelete(props.element)
         })
     }
-
-
 
     return (
         <Container>

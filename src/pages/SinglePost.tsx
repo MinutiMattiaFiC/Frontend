@@ -163,7 +163,8 @@ const SinglePost = () => {
                     </Button>
                 </Col>
                 <Col md={4}>
-                    <Card><Card.Body>
+                    <Card>
+                        <Card.Body className={'my4'}>
                             <Card.Title>About the author</Card.Title>
                             <Card.Text>{postData?.user.email}<Badge bg="primary">
                                 {postData?.user.subscription}

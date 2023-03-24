@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import useApi from "../hooks/useApi";
-import axios from "axios";
-import useToken from "../hooks/useToken";
+import useApi from "../hooks/useApi"
 function ModalEditComment(props : any) {
     const [content , setContent] = useState(props.element.content);
 
