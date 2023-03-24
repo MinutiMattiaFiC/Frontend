@@ -7,50 +7,52 @@ import Col from 'react-bootstrap/Col';
 import React, { useState } from 'react';
 import axios from 'axios';
 import useApi from "../components/hooks/useApi";
-import {Link} from "react-router-dom";
-
+import {Link, Navigate} from "react-router-dom";
 
 function Register() {
     const [validated, setValidated] = useState(false);
-    const [passwordsMatch, setPasswordsMatch] = useState(false);
 
-    const handleSubmit = (event: { currentTarget: any; preventDefault: () => void; stopPropagation: () => void; }) => {
-        const form = event.currentTarget;
+    const [passwordsMatch, setPasswordsMatch] = useState(false);
+    const [lastName, setLastName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+
+    const [showA, setShowA] = useState(false);
+    const toggleShowA = () => setShowA(!showA);
+    const [message, setMessage] = useState("");
+    const {fetchPost} = useApi()
+    const handleSubmit =  (event:any) => {
+        const form = event.currentTarget.form;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
-        }
-        const {elements} = form;
-        const password = elements.formBasicPassword.value;
-        const confirmPassword = elements.formBasicPasswordConf.value;
-        if (password !== confirmPassword) {
-            setPasswordsMatch(false);
-            setValidated(false); // Imposta validated su false per visualizzare il feedback di errore
-            event.preventDefault();
-            event.stopPropagation();
-        } else {
-            setPasswordsMatch(true);
-            if (form.checkValidity() && passwordsMatch) {
-                const first_name = elements['formBasicFirstName'].value;
-                const last_name = elements['formBasicLastName'].value;
-                const email = elements['formBasicEmail'].value;
-                const password = elements['formBasicPassword'].value;
-                axios.post('http://localhost:8252/auth/register', {
-                    first_name: first_name,
-                    last_name: last_name,
-                    email: email,
-                    password:password
-                }).then((response) => {
-                        console.log(response);
-                    }, (error) => {
-                        console.log(error);
-                    });
-            }
             setValidated(true);
+        } else {
+            if(password === passwordConfirm){
+                event.preventDefault();
+                setValidated(true);
+                setPasswordsMatch(true);
+                fetchPost('auth/register',{
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    password: password,
+
+                }).then((response) => {
+                    localStorage.setItem('user', JSON.stringify(response.data.data));
+                    return <Navigate to={'/posts'} replace/>
+                }, (error) => {
+                    setShowA(true)
+                    setMessage(" 422 Unprocessable Content ");
+                });
+            }else{
+                setPasswordsMatch(false);
+            }
+
         }
-
-    }
-
+    };
 
 
     return (
@@ -65,6 +67,8 @@ function Register() {
                                 required
                                 type="text"
                                 placeholder="First name"
+                                value={firstName}
+                                onChange={(event) => setFirstName(event.target.value)}
                             />
                             <Form.Control.Feedback type="invalid">
                                 Please provide a valid first name.
@@ -78,6 +82,8 @@ function Register() {
                                 required
                                 type="text"
                                 placeholder="Last name"
+                                value={lastName}
+                                onChange={(event) => setLastName(event.target.value)}
                             />
                             <Form.Control.Feedback type="invalid">
                                 Please provide a valid last name.
@@ -91,6 +97,8 @@ function Register() {
                         required
                         type="email"
                         placeholder="Enter email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                     <Form.Text className="text-muted">
                         We'll never share your email with anyone else.
@@ -106,6 +114,8 @@ function Register() {
                         type="password"
                         placeholder="Enter password"
                         pattern=".{8,}"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
                         isInvalid={!passwordsMatch && validated}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -119,6 +129,8 @@ function Register() {
                         type="password"
                         placeholder="Confirm password"
                         pattern=".{8,}"
+                        value={passwordConfirm}
+                        onChange={(event) => setPasswordConfirm(event.target.value)}
                         isInvalid={!passwordsMatch && validated}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -139,7 +151,8 @@ function Register() {
                     </Form.Control.Feedback>
                 </Form.Group>
                 <Stack direction="horizontal" gap={3}>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" type={"button"}
+                            onClick={handleSubmit}>
                         Submit
                     </Button>
                     <Link to={`/auth/login`}>
